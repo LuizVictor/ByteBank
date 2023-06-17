@@ -12,7 +12,7 @@ class ClientTest {
     void mustCreateAnValidClient() {
         ClientDto data = new ClientDto("John", "123.123.123-12", "email@email.com");
         Client client = new Client(data);
-        assertEquals("John", client.getName());
+        assertEquals("John", client.name());
     }
 
     @Test

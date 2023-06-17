@@ -24,7 +24,7 @@ public class ClientRepositoryMemory implements ClientRepository {
     public Client searchByCpf(String cpf) {
         return this.clients
                 .stream()
-                .filter(client -> client.getCpf().equals(cpf))
+                .filter(client -> client.cpf().equals(cpf))
                 .findFirst()
                 .orElse(null);
     }
@@ -33,7 +33,7 @@ public class ClientRepositoryMemory implements ClientRepository {
     public Client searchByEmail(String email) {
         return this.clients
                 .stream()
-                .filter(client -> client.getEmail().equals(email))
+                .filter(client -> client.email().equals(email))
                 .findFirst()
                 .orElse(null);
     }
@@ -42,8 +42,8 @@ public class ClientRepositoryMemory implements ClientRepository {
     public void update(Client client) {
         var index = IntStream.range(0, clients.size())
                 .filter(i -> clients.get(i)
-                        .getCpf()
-                        .equals(client.getCpf()))
+                        .cpf()
+                        .equals(client.cpf()))
                 .findFirst();
 
         clients.set(index.getAsInt(), client);
@@ -51,7 +51,7 @@ public class ClientRepositoryMemory implements ClientRepository {
 
     @Override
     public void remove(Client client) {
-        client = searchByCpf(client.getCpf());
+        client = searchByCpf(client.cpf());
         clients.remove(client);
     }
 }

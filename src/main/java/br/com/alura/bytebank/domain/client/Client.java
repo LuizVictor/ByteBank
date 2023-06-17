@@ -13,20 +13,16 @@ public class Client {
         this.email = new Email(data.email());
     }
 
-    public String getCpf() {
+    public String cpf() {
         return cpf.toString();
     }
 
-    public String getName() {
+    public String name() {
         return this.name;
     }
 
-    public String getEmail() {
+    public String email() {
         return email.toString();
-    }
-
-    public void update(ClientUpdateDto data) {
-
     }
 
     @Override
