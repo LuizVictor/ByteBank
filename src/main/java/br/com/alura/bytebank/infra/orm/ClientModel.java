@@ -1,8 +1,7 @@
-package br.com.alura.bytebank.model;
+package br.com.alura.bytebank.infra.orm;
 
 import br.com.alura.bytebank.domain.client.ClientDto;
 import br.com.alura.bytebank.domain.client.ClientUpdateDto;
-import br.com.alura.bytebank.domain.client.Email;
 import jakarta.persistence.*;
 
 @Entity

@@ -1,10 +1,8 @@
 package br.com.alura.bytebank.infra.account.service;
 
 import br.com.alura.bytebank.domain.account.Account;
-import br.com.alura.bytebank.domain.account.AccountDto;
-import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.account.AccountService;
-import br.com.alura.bytebank.model.AccountModel;
+import br.com.alura.bytebank.infra.orm.AccountModel;
 import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;

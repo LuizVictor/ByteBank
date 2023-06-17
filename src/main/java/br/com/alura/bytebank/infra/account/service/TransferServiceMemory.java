@@ -4,7 +4,6 @@ import br.com.alura.bytebank.domain.account.Account;
 import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.account.AccountService;
 import br.com.alura.bytebank.domain.account.TransferService;
-import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
 
 import java.math.BigDecimal;
 

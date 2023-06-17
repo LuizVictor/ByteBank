@@ -12,7 +12,6 @@ import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.account.repository.AccountRepositoryDb;
 import br.com.alura.bytebank.infra.account.service.AccountServiceDb;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
-import br.com.alura.bytebank.model.AccountModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

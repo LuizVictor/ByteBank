@@ -4,7 +4,7 @@ import br.com.alura.bytebank.domain.account.Account;
 import br.com.alura.bytebank.domain.account.AccountDto;
 import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.client.ClientDto;
-import br.com.alura.bytebank.model.AccountModel;
+import br.com.alura.bytebank.infra.orm.AccountModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 

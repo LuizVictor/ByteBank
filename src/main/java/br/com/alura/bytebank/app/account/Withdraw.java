@@ -2,7 +2,6 @@ package br.com.alura.bytebank.app.account;
 
 import br.com.alura.bytebank.domain.account.*;
 import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
-import br.com.alura.bytebank.infra.account.service.AccountServiceMemory;
 
 import java.math.BigDecimal;
 

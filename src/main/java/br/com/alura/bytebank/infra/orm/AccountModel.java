@@ -1,4 +1,4 @@
-package br.com.alura.bytebank.model;
+package br.com.alura.bytebank.infra.orm;
 
 import br.com.alura.bytebank.domain.account.AccountDto;
 import jakarta.persistence.Entity;

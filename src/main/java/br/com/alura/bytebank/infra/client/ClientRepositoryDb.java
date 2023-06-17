@@ -4,7 +4,7 @@ import br.com.alura.bytebank.domain.client.Client;
 import br.com.alura.bytebank.domain.client.ClientDto;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.domain.client.ClientUpdateDto;
-import br.com.alura.bytebank.model.ClientModel;
+import br.com.alura.bytebank.infra.orm.ClientModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
