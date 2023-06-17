@@ -30,41 +30,16 @@ public class AccountRepositoryDb implements AccountRepository {
     public List<Account> list() {
         String jpql = "select accounts from AccountModel accounts";
         TypedQuery<AccountModel> query = entityManager.createQuery(jpql, AccountModel.class);
-        return query.getResultList().stream().map(accountModel -> {
-            ClientDto clientDto = new ClientDto(
-                    accountModel.client().name(),
-                    accountModel.client().cpf(),
-                    accountModel.client().email()
-            );
-            AccountDto accountDto = new AccountDto(accountModel.number(), clientDto);
-            Account account = new Account(accountDto);
-
-            if (accountModel.balance().compareTo(BigDecimal.ZERO) > 0) {
-                account.setBalance(accountModel.balance());
-            }
-
-            return account;
-        }).collect(Collectors.toList());
+        return query.getResultList()
+                .stream().map(AccountRepositoryDb::getAccount)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Account searchByNumber(Integer accountNumber) {
         try {
             AccountModel accountModel = entityManager.find(AccountModel.class, accountNumber);
-            ClientDto clientDto = new ClientDto(
-                    accountModel.client().name(),
-                    accountModel.client().cpf(),
-                    accountModel.client().email()
-            );
-
-            AccountDto accountDto = new AccountDto(accountNumber, clientDto);
-            Account account = new Account(accountDto);
-
-            if (accountModel.balance().compareTo(BigDecimal.ZERO) > 0) {
-                account.setBalance(accountModel.balance());
-            }
-
-            return account;
+            return getAccount(accountModel);
         } catch (NullPointerException e) {
             return null;
         }
@@ -74,26 +49,32 @@ public class AccountRepositoryDb implements AccountRepository {
     public List<Account> searchByClientCpf(String cpf) {
         String jpql = "select accounts from AccountModel accounts where accounts.client.cpf = :cpf";
         TypedQuery<AccountModel> query = entityManager.createQuery(jpql, AccountModel.class);
-        return query.setParameter("cpf", cpf).getResultList().stream().map(accountModel -> {
-            ClientDto clientDto = new ClientDto(
-                    accountModel.client().name(),
-                    accountModel.client().cpf(),
-                    accountModel.client().email()
-            );
-            AccountDto accountDto = new AccountDto(accountModel.number(), clientDto);
-            Account account = new Account(accountDto);
-
-            if (accountModel.balance().compareTo(BigDecimal.ZERO) > 0) {
-                account.setBalance(accountModel.balance());
-            }
-
-            return account;
-        }).collect(Collectors.toList());
+        return query.setParameter("cpf", cpf)
+                .getResultList()
+                .stream().map(AccountRepositoryDb::getAccount)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void close(Account account) {
         AccountModel accountModel = entityManager.find(AccountModel.class, account.number());
         entityManager.remove(accountModel);
+    }
+
+    private static Account getAccount(AccountModel accountModel) {
+        ClientDto clientDto = new ClientDto(
+                accountModel.client().name(),
+                accountModel.client().cpf(),
+                accountModel.client().email()
+        );
+
+        AccountDto accountDto = new AccountDto(accountModel.number(), clientDto);
+        Account account = new Account(accountDto);
+
+        if (accountModel.balance().compareTo(BigDecimal.ZERO) > 0) {
+            account.setBalance(accountModel.balance());
+        }
+
+        return account;
     }
 }
