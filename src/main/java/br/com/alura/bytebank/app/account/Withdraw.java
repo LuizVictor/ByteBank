@@ -28,7 +28,6 @@ public class Withdraw {
 
         BigDecimal value = detailDto.balance().subtract(amount);
 
-        AccountDto data = new AccountDto(detailDto.number(), detailDto.client());
-        service.withdraw(new Account(data), value);
+        service.withdraw(number, value);
     }
 }

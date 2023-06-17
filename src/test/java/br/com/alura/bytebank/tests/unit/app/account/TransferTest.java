@@ -1,24 +1,26 @@
 package br.com.alura.bytebank.tests.unit.app.account;
 
-import br.com.alura.bytebank.app.account.*;
+import br.com.alura.bytebank.app.account.Deposit;
+import br.com.alura.bytebank.app.account.ListAccount;
+import br.com.alura.bytebank.app.account.RegisterAccount;
+import br.com.alura.bytebank.app.account.Transfer;
 import br.com.alura.bytebank.app.client.RegisterClient;
 import br.com.alura.bytebank.domain.account.AccountDto;
-import br.com.alura.bytebank.domain.account.AccountService;
-import br.com.alura.bytebank.domain.account.TransferService;
-import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.alura.bytebank.domain.account.AccountRepository;
+import br.com.alura.bytebank.domain.account.AccountService;
+import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.alura.bytebank.domain.client.ClientDto;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.account.repository.AccountRepositoryMemory;
 import br.com.alura.bytebank.infra.account.service.AccountServiceMemory;
-import br.com.alura.bytebank.infra.account.service.TransferServiceMemory;
 import br.com.alura.bytebank.infra.client.ClientRepositoryMemory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TransferTest {
     private static ListAccount listAccount;
@@ -44,16 +46,16 @@ public class TransferTest {
         registerAccount.execute(account2);
 
         Deposit deposit = new Deposit(accountRepository, accountService);
-        deposit.execute(1234, new BigDecimal("1000"));
+        deposit.execute(1234, new BigDecimal("100"));
 
         listAccount = new ListAccount(accountRepository);
-        TransferService transferService = new TransferServiceMemory(accountRepository, accountService);
-        transfer = new Transfer(accountRepository, transferService);
+        transfer = new Transfer(accountRepository, accountService);
     }
 
     @Test
     void mustTransferTen() {
         transfer.execute(1234, 4321, BigDecimal.TEN);
+        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(1234).balance());
         assertEquals(BigDecimal.TEN, listAccount.searchByNumber(4321).balance());
     }
 

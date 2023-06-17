@@ -15,14 +15,10 @@ public class Deposit {
     }
 
     public void execute(Integer accountNumber, BigDecimal amount) {
-        ListAccount listAccount = new ListAccount(repository);
-        AccountDetailDto detailDto = listAccount.searchByNumber(accountNumber);
-
         if (amount.signum() < 1) {
             throw new AccountDomainException("Cannot deposit an amount equal to zero or a negative amount");
         }
 
-        AccountDto data = new AccountDto(detailDto.number(), detailDto.client());
-        service.deposit(new Account(data), amount);
+        service.deposit(accountNumber, amount);
     }
 }

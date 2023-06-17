@@ -13,11 +13,11 @@ public class AccountServiceMemory implements AccountService {
         this.repository = repository;
     }
 
-    public void deposit(Account account, BigDecimal amount) {
-        repository.searchByNumber(account.number()).setBalance(amount);
+    public void deposit(Integer accountNumber, BigDecimal amount) {
+        repository.searchByNumber(accountNumber).setBalance(amount);
     }
 
-    public void withdraw(Account account, BigDecimal amount) {
-        repository.searchByNumber(account.number()).setBalance(amount);
+    public void withdraw(Integer accountNumber, BigDecimal amount) {
+        repository.searchByNumber(accountNumber).setBalance(amount);
     }
 }

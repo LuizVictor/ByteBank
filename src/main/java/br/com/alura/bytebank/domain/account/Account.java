@@ -1,6 +1,5 @@
 package br.com.alura.bytebank.domain.account;
 
-import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.alura.bytebank.domain.client.Client;
 import br.com.alura.bytebank.domain.client.ClientDto;
 

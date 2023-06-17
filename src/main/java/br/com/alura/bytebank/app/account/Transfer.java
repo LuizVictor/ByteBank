@@ -2,17 +2,18 @@ package br.com.alura.bytebank.app.account;
 
 import br.com.alura.bytebank.domain.account.*;
 import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
+import br.com.alura.bytebank.infra.account.service.AccountServiceMemory;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Transfer {
     private final AccountRepository repository;
-    private final TransferService transfer;
+    private final AccountService service;
 
-    public Transfer(AccountRepository accountRepository, TransferService transferService) {
+    public Transfer(AccountRepository accountRepository, AccountService accountService) {
         repository = accountRepository;
-        transfer = transferService;
+        service = accountService;
     }
 
     public void execute(Integer fromAccount, Integer toAccount, BigDecimal amount) {
@@ -27,6 +28,10 @@ public class Transfer {
             throw new AccountDomainException("Cannot transfer to the same account");
         }
 
-        transfer.execute(new Account(from), new Account(to), amount);
+        Withdraw withdraw = new Withdraw(repository, service);
+        withdraw.execute(fromAccount, amount);
+
+        Deposit deposit = new Deposit(repository, service);
+        deposit.execute(toAccount, amount);
     }
 }

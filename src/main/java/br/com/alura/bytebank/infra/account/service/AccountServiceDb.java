@@ -1,6 +1,5 @@
 package br.com.alura.bytebank.infra.account.service;
 
-import br.com.alura.bytebank.domain.account.Account;
 import br.com.alura.bytebank.domain.account.AccountService;
 import br.com.alura.bytebank.infra.orm.AccountModel;
 import jakarta.persistence.EntityManager;
@@ -15,13 +14,12 @@ public class AccountServiceDb implements AccountService {
     }
 
     @Override
-    public void deposit(Account account, BigDecimal amount) {
-        AccountModel accountModel = entityManager.find(AccountModel.class, account.number());
-        accountModel.setBalance(amount);
+    public void deposit(Integer accountNumber, BigDecimal amount) {
+        entityManager.find(AccountModel.class, accountNumber).setBalance(amount);
     }
 
     @Override
-    public void withdraw(Account account, BigDecimal amount) {
-        entityManager.find(AccountModel.class, account.number()).setBalance(amount);
+    public void withdraw(Integer accountNumber, BigDecimal amount) {
+        entityManager.find(AccountModel.class, accountNumber).setBalance(amount);
     }
 }

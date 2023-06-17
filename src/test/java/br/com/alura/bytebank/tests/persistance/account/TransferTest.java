@@ -8,12 +8,10 @@ import br.com.alura.bytebank.app.client.RegisterClient;
 import br.com.alura.bytebank.domain.account.AccountDto;
 import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.account.AccountService;
-import br.com.alura.bytebank.domain.account.TransferService;
 import br.com.alura.bytebank.domain.client.ClientDto;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.account.repository.AccountRepositoryDb;
 import br.com.alura.bytebank.infra.account.service.AccountServiceDb;
-import br.com.alura.bytebank.infra.account.service.TransferServiceMemory;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -56,13 +54,13 @@ public class TransferTest {
         ListAccount listAccount = new ListAccount(accountRepository);
         assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(4321).balance());
 
-        TransferService transferService = new TransferServiceMemory(accountRepository, accountService);
-        Transfer transfer = new Transfer(accountRepository, transferService);
+        Transfer transfer = new Transfer(accountRepository, accountService);
         transfer.execute(1234, 4321, BigDecimal.TEN);
         entityManager.getTransaction().commit();
 
         assertEquals("123.123.123-12", listAccount.searchByNumber(1234).client().cpf());
         assertEquals("John", listAccount.searchByNumber(1234).client().name());
+        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(1234).balance());
         assertEquals(BigDecimal.TEN, listAccount.searchByNumber(4321).balance());
 
         entityManager.close();
