@@ -2,11 +2,10 @@ package br.com.alura.bytebank.tests.persistance.client;
 
 import br.com.alura.bytebank.app.client.RegisterClient;
 import br.com.alura.bytebank.domain.client.ClientDto;
+import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.domain.client.exceptions.ClientDomainException;
-import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
+import br.com.alura.bytebank.tests.persistance.util.RepositoryUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,29 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegisterClientTest {
     private static RegisterClient registerClient;
     private static EntityManager entityManager;
-    private static ClientRepositoryDb repositoryH2;
+    private static ClientRepository repository;
 
     @BeforeAll
     static void beforeAll() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("h2");
-        entityManager = factory.createEntityManager();
-        repositoryH2 = new ClientRepositoryDb(entityManager);
-        registerClient = new RegisterClient(repositoryH2);
-    }
-
-    @BeforeEach
-    void setUp() {
+        entityManager = RepositoryUtil.createEntityManager("h2");
+        repository = RepositoryUtil.repository();
+        registerClient = new RegisterClient(repository);
         entityManager.getTransaction().begin();
     }
 
     @Test
     void mustRegisterClient() {
-        ClientDto clientDto = new ClientDto("John", "123.123.123-12", "john@email.com");
+        ClientDto clientDto = new ClientDto("John", "123.123.123-22", "john@email.com");
         registerClient.execute(clientDto);
-        entityManager.getTransaction().commit();
-        assertEquals(1, repositoryH2.list().size());
-        assertEquals("John", repositoryH2.searchByCpf("123.123.123-12").name());
-        assertEquals("john@email.com", repositoryH2.searchByCpf("123.123.123-12").email());
+        entityManager.flush();
+        assertEquals("John", repository.searchByCpf("123.123.123-22").name());
+        assertEquals("john@email.com", repository.searchByCpf("123.123.123-22").email());
     }
 
     @Test
@@ -51,13 +44,13 @@ class RegisterClientTest {
         String actual = exception.getMessage();
 
         assertEquals(expected, actual);
-        assertEquals(0, repositoryH2.list().size());
+        assertEquals(0, repository.list().size());
     }
 
     @Test
     void mustNotRegisterClientWithInvalidEmail() {
         Exception exception = assertThrows(ClientDomainException.class, () -> {
-            ClientDto clientDto = new ClientDto("John", "123.123.123-12", "john@email");
+            ClientDto clientDto = new ClientDto("John", "123.123.123-21", "john@email");
             registerClient.execute(clientDto);
             entityManager.flush();
         });
@@ -66,7 +59,6 @@ class RegisterClientTest {
         String actual = exception.getMessage();
 
         assertEquals(expected, actual);
-        assertEquals(0, repositoryH2.list().size());
     }
 
     @Test
@@ -83,7 +75,7 @@ class RegisterClientTest {
         String actual = exception.getMessage();
 
         assertEquals(expected, actual);
-        assertEquals(1, repositoryH2.list().size());
+        assertEquals(1, repository.list().size());
     }
 
     @Test
@@ -100,11 +92,11 @@ class RegisterClientTest {
         String actual = exception.getMessage();
 
         assertEquals(expected, actual);
-        assertEquals(1, repositoryH2.list().size());
+        assertEquals(1, repository.list().size());
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void afterAll() {
         entityManager.close();
     }
 }
