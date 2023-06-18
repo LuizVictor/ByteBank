@@ -63,14 +63,14 @@ public class ClientRepositoryDb implements ClientRepository {
 
     @Override
     public void update(Client client) {
-        ClientModel clientModel = entityManager.find(ClientModel.class, client.getCpf());
-        ClientUpdateDto updateDto = new ClientUpdateDto(client.getName(), client.getEmail());
+        ClientModel clientModel = entityManager.find(ClientModel.class, client.cpf());
+        ClientUpdateDto updateDto = new ClientUpdateDto(client.name(), client.email());
         clientModel.update(updateDto);
     }
 
     @Override
     public void remove(Client client) {
-        ClientModel clientModel = entityManager.find(ClientModel.class, client.getCpf());
+        ClientModel clientModel = entityManager.find(ClientModel.class, client.cpf());
         entityManager.remove(clientModel);
     }
 }
