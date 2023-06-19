@@ -18,8 +18,8 @@ public class ListClientsTest {
     @BeforeAll
     static void beforeAll() {
         entityManager = RepositoryUtil.createEntityManager("h2");
-        ClientRepository repository = RepositoryUtil.repository();
-        ClientUtil.createClient(entityManager, repository);
+        ClientRepository repository = RepositoryUtil.clientRepository();
+        ClientUtil.create(entityManager, repository);
         listClient = new ListClient(repository);
     }
 

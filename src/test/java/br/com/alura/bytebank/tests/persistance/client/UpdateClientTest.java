@@ -20,12 +20,12 @@ public class UpdateClientTest {
     @BeforeAll
     static void beforeAll() {
         entityManager = RepositoryUtil.createEntityManager("h2");
-        ClientRepository repository = RepositoryUtil.repository();
+        ClientRepository repository = RepositoryUtil.clientRepository();
 
 
         listClient = new ListClient(repository);
         updateClient = new UpdateClient(repository);
-        ClientUtil.createClient(entityManager, repository);
+        ClientUtil.create(entityManager, repository);
     }
 
     @Test

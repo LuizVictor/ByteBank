@@ -18,7 +18,7 @@ class RegisterClientTest {
     @BeforeAll
     static void beforeAll() {
         entityManager = RepositoryUtil.createEntityManager("h2");
-        repository = RepositoryUtil.repository();
+        repository = RepositoryUtil.clientRepository();
         registerClient = new RegisterClient(repository);
         entityManager.getTransaction().begin();
     }

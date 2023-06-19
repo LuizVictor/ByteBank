@@ -1,16 +1,16 @@
 package br.com.alura.bytebank.tests.persistance.account;
 
 import br.com.alura.bytebank.app.account.RegisterAccount;
-import br.com.alura.bytebank.app.client.RegisterClient;
 import br.com.alura.bytebank.domain.account.AccountDto;
 import br.com.alura.bytebank.domain.account.AccountRepository;
+import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.alura.bytebank.domain.client.ClientDto;
-import br.com.alura.bytebank.domain.client.ClientRepository;
-import br.com.alura.bytebank.infra.account.repository.AccountRepositoryDb;
-import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
+import br.com.alura.bytebank.domain.client.exceptions.ClientNotFoundException;
+import br.com.alura.bytebank.tests.persistance.util.ClientUtil;
+import br.com.alura.bytebank.tests.persistance.util.RepositoryUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -18,32 +18,66 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterAccountTest {
+    private static EntityManager entityManager;
+    private static AccountRepository accountRepository;
+    private static RegisterAccount registerAccount;
+    private static ClientDto clientDto;
+
+    @BeforeAll
+    static void beforeAll() {
+        entityManager = RepositoryUtil.createEntityManager("h2");
+        accountRepository = RepositoryUtil.accountRepository();
+        ClientUtil.create(entityManager, RepositoryUtil.clientRepository());
+        registerAccount = new RegisterAccount(accountRepository, RepositoryUtil.clientRepository());
+
+        clientDto = ClientUtil.list(RepositoryUtil.clientRepository(), "123.123.123-12");
+    }
 
     @Test
     void mustRegisterAccount() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("h2");
-        EntityManager entityManager = factory.createEntityManager();
-
-        ClientRepository clientRepository = new ClientRepositoryDb(entityManager);
-        AccountRepository accountRepository = new AccountRepositoryDb(entityManager);
-
-        ClientDto clientDto = new ClientDto("John", "123.123.123-12", "john@email.com");
-        RegisterClient registerClient = new RegisterClient(clientRepository);
-
         AccountDto accountDto = new AccountDto(1234, clientDto);
-        RegisterAccount registerAccount = new RegisterAccount(accountRepository, clientRepository);
 
-        entityManager.getTransaction().begin();
-        registerClient.execute(clientDto);
-        entityManager.flush();
         registerAccount.execute(accountDto);
-        entityManager.getTransaction().commit();
+        entityManager.flush();
 
         assertEquals("123.123.123-12", accountRepository.searchByNumber(1234).client().cpf());
         assertEquals("John", accountRepository.searchByNumber(1234).client().name());
         assertEquals(BigDecimal.ZERO, accountRepository.searchByNumber(1234).balance());
-
-        entityManager.close();
     }
 
+    @Test
+    void mustNotRegisterAccountWithSameNumber() {
+        Exception exception = assertThrows(AccountDomainException.class, () -> {
+            AccountDto accountDto1 = new AccountDto(4321, clientDto);
+            AccountDto accountDto2 = new AccountDto(4321, clientDto);
+            registerAccount.execute(accountDto1);
+            registerAccount.execute(accountDto2);
+            entityManager.flush();
+        });
+
+        String expected = "There is already an account registered with this number";
+        String actual = exception.getMessage();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mustNotRegisterAccountWithAClientNotRegistered() {
+        Exception exception = assertThrows(ClientNotFoundException.class, () -> {
+            ClientDto unregistered = new ClientDto("Unregistered", "123.123.123-22", "email@email.com");
+            AccountDto accountDto = new AccountDto(1234, unregistered);
+            registerAccount.execute(accountDto);
+            entityManager.flush();
+        });
+
+        String expected = "There is no registered client with this CPF";
+        String actual = exception.getMessage();
+
+        assertEquals(expected, actual);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        entityManager.close();
+    }
 }
