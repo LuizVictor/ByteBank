@@ -1,6 +1,8 @@
 package br.com.alura.bytebank.tests.persistance.util;
 
+import br.com.alura.bytebank.app.account.ListAccount;
 import br.com.alura.bytebank.app.account.RegisterAccount;
+import br.com.alura.bytebank.domain.account.AccountDetailDto;
 import br.com.alura.bytebank.domain.account.AccountDto;
 import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.client.ClientRepository;
@@ -19,5 +21,10 @@ public class AccountUtil {
         registerAccount.execute(dto2);
 
         entityManager.flush();
+    }
+
+    public static AccountDetailDto list(AccountRepository accountRepository, Integer number) {
+        ListAccount list = new ListAccount(accountRepository);
+        return list.searchByNumber(number);
     }
 }
