@@ -10,11 +10,14 @@ public class AccountUtil {
     public static void create(EntityManager entityManager, AccountRepository accountRepository) {
         ClientRepository clientRepository = RepositoryUtil.clientRepository();
         ClientUtil.create(entityManager, clientRepository);
+
+        AccountDto dto1 = new AccountDto(1234, ClientUtil.list(clientRepository, "123.123.123-12"));
+        AccountDto dto2 = new AccountDto(4321, ClientUtil.list(clientRepository, "123.123.123-21"));
+
         RegisterAccount registerAccount = new RegisterAccount(accountRepository, clientRepository);
-        AccountDto accountDto1 = new AccountDto(1234, ClientUtil.list(clientRepository, "123.123.123-12"));
-        AccountDto accountDto2 = new AccountDto(4321, ClientUtil.list(clientRepository, "123.123.123-21"));
-        registerAccount.execute(accountDto1);
-        registerAccount.execute(accountDto2);
+        registerAccount.execute(dto1);
+        registerAccount.execute(dto2);
+
         entityManager.flush();
     }
 }
