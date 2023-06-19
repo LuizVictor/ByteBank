@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DepositTest {
     private static EntityManager entityManager;
@@ -46,7 +45,8 @@ public class DepositTest {
     @Test
     void mustNotDepositZero() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(1234, BigDecimal.ZERO);
+            deposit.execute(4321, BigDecimal.ZERO);
+            entityManager.flush();
         });
 
         String expectedMessage = "Cannot deposit an amount equal to zero or a negative amount";
@@ -58,13 +58,15 @@ public class DepositTest {
     @Test
     void mustNotDepositNegativeAmount() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(1234, new BigDecimal(-111));
+            deposit.execute(4321, new BigDecimal(-111));
+            entityManager.flush();
         });
 
         String expectedMessage = "Cannot deposit an amount equal to zero or a negative amount";
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
+        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, 4321).balance());
     }
 
     @AfterAll

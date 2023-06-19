@@ -51,7 +51,7 @@ public class WithdrawTest {
         assertEquals(new BigDecimal("90"), listAccount.searchByNumber(1234).balance());
     }
 
-   @Test
+    @Test
     void mustNotWithAmountGreaterThaBalance() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
             withdraw.execute(1234, new BigDecimal("200"));
