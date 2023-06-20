@@ -1,68 +1,71 @@
 package br.com.alura.bytebank.tests.persistance.account;
 
 import br.com.alura.bytebank.app.account.Deposit;
-import br.com.alura.bytebank.app.account.ListAccount;
-import br.com.alura.bytebank.app.account.RegisterAccount;
 import br.com.alura.bytebank.app.account.Transfer;
-import br.com.alura.bytebank.app.client.RegisterClient;
-import br.com.alura.bytebank.domain.account.AccountDto;
 import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.account.AccountService;
-import br.com.alura.bytebank.domain.client.ClientDto;
-import br.com.alura.bytebank.domain.client.ClientRepository;
-import br.com.alura.bytebank.infra.account.repository.AccountRepositoryDb;
+import br.com.alura.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.alura.bytebank.infra.account.service.AccountServiceDb;
-import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
+import br.com.alura.bytebank.tests.persistance.util.AccountUtil;
+import br.com.alura.bytebank.tests.persistance.util.RepositoryUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TransferTest {
-    @Test
-    void mustTransferTen() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("h2");
-        EntityManager entityManager = factory.createEntityManager();
+    private static EntityManager entityManager;
+    private static AccountRepository repository;
+    private static Transfer transfer;
 
-        ClientRepository clientRepository = new ClientRepositoryDb(entityManager);
-        AccountRepository accountRepository = new AccountRepositoryDb(entityManager);
+    @BeforeAll
+    static void beforeAll() {
+        entityManager = RepositoryUtil.createEntityManager("h2");
 
-        ClientDto clientDto = new ClientDto("John", "123.123.123-12", "john@email.com");
-        RegisterClient registerClient = new RegisterClient(clientRepository);
-
-        AccountDto accountDto1 = new AccountDto(1234, clientDto);
-        AccountDto accountDto2 = new AccountDto(4321, clientDto);
-        RegisterAccount registerAccount = new RegisterAccount(accountRepository, clientRepository);
-
-        entityManager.getTransaction().begin();
-        registerClient.execute(clientDto);
-        entityManager.flush();
-        registerAccount.execute(accountDto1);
-        registerAccount.execute(accountDto2);
-        entityManager.flush();
+        repository = RepositoryUtil.accountRepository();
+        AccountUtil.create(entityManager, repository);
 
         AccountService accountService = new AccountServiceDb(entityManager);
-        Deposit deposit = new Deposit(accountRepository, accountService);
-
+        Deposit deposit = new Deposit(repository, accountService);
         deposit.execute(1234, new BigDecimal("100"));
         entityManager.flush();
 
-        ListAccount listAccount = new ListAccount(accountRepository);
-        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(4321).balance());
+        transfer = new Transfer(repository, accountService);
+    }
 
-        Transfer transfer = new Transfer(accountRepository, accountService);
+    @Test
+    void mustTransferTen() {
         transfer.execute(1234, 4321, BigDecimal.TEN);
-        entityManager.getTransaction().commit();
+        entityManager.flush();
 
-        assertEquals("123.123.123-12", listAccount.searchByNumber(1234).client().cpf());
-        assertEquals("John", listAccount.searchByNumber(1234).client().name());
-        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(1234).balance());
-        assertEquals(BigDecimal.TEN, listAccount.searchByNumber(4321).balance());
+        assertEquals("123.123.123-12", AccountUtil.list(repository, 1234).client().cpf());
+        assertEquals("John", AccountUtil.list(repository, 1234).client().name());
+        assertEquals(new BigDecimal("90"), AccountUtil.list(repository, 1234).balance());
+        assertEquals("123.123.123-21", AccountUtil.list(repository, 4321).client().cpf());
+        assertEquals("Joanna", AccountUtil.list(repository, 4321).client().name());
+        assertEquals(BigDecimal.TEN, AccountUtil.list(repository, 4321).balance());
+    }
 
+    @Test
+    void mustNotTransferToSameAccount() {
+        Exception exception = assertThrows(AccountDomainException.class, () -> {
+            transfer.execute(1234,1234, BigDecimal.TEN);
+            entityManager.flush();
+        });
+
+        String expectedMessage = "Cannot transfer to the same account";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(expectedMessage, actualMessage);
+        assertEquals(new BigDecimal("100"), AccountUtil.list(repository, 1234).balance());
+    }
+
+    @AfterAll
+    static void afterAll() {
         entityManager.close();
     }
 }
