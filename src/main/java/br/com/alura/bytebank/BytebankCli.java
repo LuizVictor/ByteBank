@@ -1,10 +1,13 @@
 package br.com.alura.bytebank;
 
+import br.com.alura.bytebank.cli.account.RegisterAccountCli;
 import br.com.alura.bytebank.cli.client.ListClientsCli;
 import br.com.alura.bytebank.cli.client.RegisterClientCli;
 import br.com.alura.bytebank.cli.client.RemoveClientCli;
 import br.com.alura.bytebank.cli.client.UpdateClientCli;
+import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.client.ClientRepository;
+import br.com.alura.bytebank.infra.account.repository.AccountRepositoryDb;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -14,9 +17,10 @@ import java.util.Scanner;
 
 public class BytebankCli {
     private static final Scanner scanner = new Scanner(System.in).useDelimiter("\n");
-    private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("h2");
-    private static EntityManager entityManager = factory.createEntityManager();
-    private static ClientRepository clientRepository = new ClientRepositoryDb(entityManager);
+    private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("h2");
+    private static final EntityManager entityManager = factory.createEntityManager();
+    private static final ClientRepository clientRepository = new ClientRepositoryDb(entityManager);
+    private static final AccountRepository accountRepository = new AccountRepositoryDb(entityManager);
 
     public static void main(String[] args) {
         int option = showMenu();
@@ -93,7 +97,7 @@ public class BytebankCli {
         while (option != 7) {
             try {
                 switch (option) {
-                    case 1 -> System.out.println("Register Account");
+                    case 1 -> new RegisterAccountCli(accountRepository, clientRepository, entityManager);
                     case 2 -> System.out.println("Search by number");
                     case 3 -> System.out.println("Search by client cpf");
                     case 4 -> System.out.println("Deposit");

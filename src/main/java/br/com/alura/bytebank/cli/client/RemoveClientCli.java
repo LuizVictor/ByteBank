@@ -16,5 +16,8 @@ public class RemoveClientCli {
         RemoveClient remove = new RemoveClient(repository);
         remove.execute(cpf);
         entityManager.flush();
+
+        System.out.println("Client removed");
+        System.out.println("Press ENTER to return to the menu");
     }
 }

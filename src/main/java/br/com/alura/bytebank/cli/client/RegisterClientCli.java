@@ -26,7 +26,7 @@ public class RegisterClientCli {
         register.execute(client);
         entityManager.flush();
 
-        System.out.println("Account successfully opened!");
+        System.out.println("Client registered successfully");
         System.out.println("Press ENTER to return to the menu");
         scanner.next();
 
