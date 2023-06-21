@@ -2,6 +2,7 @@ package br.com.alura.bytebank;
 
 import br.com.alura.bytebank.cli.client.ListClientsCli;
 import br.com.alura.bytebank.cli.client.RegisterClientCli;
+import br.com.alura.bytebank.cli.client.UpdateClientCli;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
 import jakarta.persistence.EntityManager;
@@ -51,14 +52,15 @@ public class BytebankCli {
     private static void clientMenu() {
         var option = showClientMenu();
 
-        while (option != 6) {
+        while (option != 7) {
             try {
                 switch (option) {
                     case 1 -> new RegisterClientCli(clientRepository, entityManager);
                     case 2 -> System.out.println(ListClientsCli.all(clientRepository));
                     case 3 -> System.out.println(ListClientsCli.byCpf(clientRepository));
                     case 4 -> System.out.println(ListClientsCli.byEmail(clientRepository));
-                    case 5 -> System.out.println("Delete");
+                    case 5 -> new UpdateClientCli(clientRepository, entityManager);
+                    case 6 -> System.out.println("Delete");
                 }
             } catch (RuntimeException exception) {
                 System.out.println("Error: " + exception.getMessage());
@@ -76,8 +78,9 @@ public class BytebankCli {
                 2 - List
                 3 - Search by cpf
                 4 - Search by email
-                5 - Delete
-                6 - Back to menu
+                5 - Update
+                6 - Delete
+                7 - Back to menu
                 """);
 
         return scanner.nextInt();
