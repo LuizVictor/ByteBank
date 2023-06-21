@@ -50,6 +50,15 @@ public class DepositTest {
         assertEquals(BigDecimal.TEN, listAccount.searchByNumber(1234).balance());
     }
 
+    @Test
+    void mustDepositMoreTen() {
+        deposit.execute(1234, BigDecimal.TEN);
+
+        assertEquals("John", listAccount.searchByNumber(1234).client().name());
+        assertEquals(1234, listAccount.searchByNumber(1234).number());
+        assertEquals(new BigDecimal(20), listAccount.searchByNumber(1234).balance());
+    }
+
 
     @Test
     void mustNotDepositZero() {

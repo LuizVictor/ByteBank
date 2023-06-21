@@ -19,6 +19,9 @@ public class Deposit {
             throw new AccountDomainException("Cannot deposit an amount equal to zero or a negative amount");
         }
 
-        service.deposit(accountNumber, amount);
+        ListAccount listAccount = new ListAccount(repository);
+        BigDecimal depositValue = listAccount.searchByNumber(accountNumber).balance().add(amount);
+
+        service.deposit(accountNumber, depositValue);
     }
 }
