@@ -2,6 +2,7 @@ package br.com.alura.bytebank;
 
 import br.com.alura.bytebank.cli.client.ListClientsCli;
 import br.com.alura.bytebank.cli.client.RegisterClientCli;
+import br.com.alura.bytebank.cli.client.RemoveClientCli;
 import br.com.alura.bytebank.cli.client.UpdateClientCli;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
@@ -60,7 +61,7 @@ public class BytebankCli {
                     case 3 -> System.out.println(ListClientsCli.byCpf(clientRepository));
                     case 4 -> System.out.println(ListClientsCli.byEmail(clientRepository));
                     case 5 -> new UpdateClientCli(clientRepository, entityManager);
-                    case 6 -> System.out.println("Delete");
+                    case 6 -> new RemoveClientCli(clientRepository, entityManager);
                 }
             } catch (RuntimeException exception) {
                 System.out.println("Error: " + exception.getMessage());
