@@ -1,6 +1,7 @@
 package br.com.alura.bytebank;
 
-import br.com.alura.bytebank.cli.client.RegisterCli;
+import br.com.alura.bytebank.cli.client.ListClientsCli;
+import br.com.alura.bytebank.cli.client.RegisterClientCli;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
 import jakarta.persistence.EntityManager;
@@ -53,10 +54,10 @@ public class BytebankCli {
         while (option != 6) {
             try {
                 switch (option) {
-                    case 1 -> new RegisterCli(clientRepository, entityManager);
-                    case 2 -> System.out.println("List Clients");
-                    case 3 -> System.out.println("Search by CPF");
-                    case 4 -> System.out.println("Search by email");
+                    case 1 -> new RegisterClientCli(clientRepository, entityManager);
+                    case 2 -> System.out.println(ListClientsCli.all(clientRepository));
+                    case 3 -> System.out.println(ListClientsCli.byCpf(clientRepository));
+                    case 4 -> System.out.println(ListClientsCli.byEmail(clientRepository));
                     case 5 -> System.out.println("Delete");
                 }
             } catch (RuntimeException exception) {

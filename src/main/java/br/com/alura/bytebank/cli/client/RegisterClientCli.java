@@ -7,10 +7,10 @@ import jakarta.persistence.EntityManager;
 
 import java.util.Scanner;
 
-public class RegisterCli {
+public class RegisterClientCli {
     private static final Scanner scanner = new Scanner(System.in).useDelimiter("\n");
 
-    public RegisterCli(ClientRepository clientRepository, EntityManager entityManager) {
+    public RegisterClientCli(ClientRepository clientRepository, EntityManager entityManager) {
         System.out.println("Enter name:");
         String name = scanner.next();
 
