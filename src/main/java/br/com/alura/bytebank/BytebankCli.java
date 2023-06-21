@@ -1,14 +1,25 @@
 package br.com.alura.bytebank;
 
+import br.com.alura.bytebank.cli.client.RegisterCli;
+import br.com.alura.bytebank.domain.client.ClientRepository;
+import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
 import java.util.Scanner;
 
 public class BytebankCli {
     private static final Scanner scanner = new Scanner(System.in).useDelimiter("\n");
+    private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("h2");
+    private static EntityManager entityManager = factory.createEntityManager();
+    private static ClientRepository clientRepository = new ClientRepositoryDb(entityManager);
 
     public static void main(String[] args) {
         int option = showMenu();
 
         while (option != 3) {
+            entityManager.getTransaction().begin();
             try {
                 switch (option) {
                     case 1 -> clientMenu();
@@ -20,6 +31,7 @@ public class BytebankCli {
                 scanner.next();
             }
             option = showMenu();
+            entityManager.getTransaction().commit();
         }
 
         System.out.println("Finalizing the application.");
@@ -41,7 +53,7 @@ public class BytebankCli {
         while (option != 6) {
             try {
                 switch (option) {
-                    case 1 -> System.out.println("Register Client");
+                    case 1 -> new RegisterCli(clientRepository, entityManager);
                     case 2 -> System.out.println("List Clients");
                     case 3 -> System.out.println("Search by CPF");
                     case 4 -> System.out.println("Search by email");
