@@ -1,5 +1,6 @@
 package br.com.alura.bytebank;
 
+import br.com.alura.bytebank.cli.account.ListAccountsCli;
 import br.com.alura.bytebank.cli.account.RegisterAccountCli;
 import br.com.alura.bytebank.cli.client.ListClientsCli;
 import br.com.alura.bytebank.cli.client.RegisterClientCli;
@@ -94,15 +95,16 @@ public class BytebankCli {
     private static void accountMenu() {
         var option = showAccountMenu();
 
-        while (option != 7) {
+        while (option != 8) {
             try {
                 switch (option) {
                     case 1 -> new RegisterAccountCli(accountRepository, clientRepository, entityManager);
-                    case 2 -> System.out.println("Search by number");
-                    case 3 -> System.out.println("Search by client cpf");
-                    case 4 -> System.out.println("Deposit");
-                    case 5 -> System.out.println("Withdraw");
-                    case 6 -> System.out.println("Transfer");
+                    case 2 -> System.out.println(ListAccountsCli.all(accountRepository));
+                    case 3 -> System.out.println(ListAccountsCli.byNumber(accountRepository));
+                    case 4 -> System.out.println(ListAccountsCli.byCpf(accountRepository));
+                    case 5 -> System.out.println("Deposit");
+                    case 6 -> System.out.println("Withdraw");
+                    case 7 -> System.out.println("Transfer");
                 }
             } catch (RuntimeException exception) {
                 System.out.println("Error: " + exception.getMessage());
@@ -117,12 +119,13 @@ public class BytebankCli {
         System.out.println("""
                 BYETBANK - Account Application:
                 1 - Open new account
-                2 - Search by number
-                3 - Search by client cpf
-                4 - Deposit
-                5 - Withdraw
-                6 - Transfer
-                7 - Back to menu
+                2 - List Accounts
+                3 - Search by number
+                4 - Search by client cpf
+                5 - Deposit
+                6 - Withdraw
+                7 - Transfer
+                8 - Back to menu
                 """);
 
         return scanner.nextInt();
