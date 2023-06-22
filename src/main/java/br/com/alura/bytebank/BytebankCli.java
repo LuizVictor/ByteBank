@@ -3,6 +3,7 @@ package br.com.alura.bytebank;
 import br.com.alura.bytebank.cli.account.DepositCli;
 import br.com.alura.bytebank.cli.account.ListAccountsCli;
 import br.com.alura.bytebank.cli.account.RegisterAccountCli;
+import br.com.alura.bytebank.cli.account.WithdrawCli;
 import br.com.alura.bytebank.cli.client.ListClientsCli;
 import br.com.alura.bytebank.cli.client.RegisterClientCli;
 import br.com.alura.bytebank.cli.client.RemoveClientCli;
@@ -107,7 +108,7 @@ public class BytebankCli {
                     case 3 -> System.out.println(ListAccountsCli.byNumber(accountRepository));
                     case 4 -> System.out.println(ListAccountsCli.byCpf(accountRepository));
                     case 5 -> new DepositCli(accountRepository, accountService, entityManager);
-                    case 6 -> System.out.println("Withdraw");
+                    case 6 -> new WithdrawCli(accountRepository, accountService, entityManager);
                     case 7 -> System.out.println("Transfer");
                 }
             } catch (RuntimeException exception) {
