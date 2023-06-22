@@ -1,5 +1,6 @@
 package br.com.alura.bytebank;
 
+import br.com.alura.bytebank.cli.account.DepositCli;
 import br.com.alura.bytebank.cli.account.ListAccountsCli;
 import br.com.alura.bytebank.cli.account.RegisterAccountCli;
 import br.com.alura.bytebank.cli.client.ListClientsCli;
@@ -7,8 +8,10 @@ import br.com.alura.bytebank.cli.client.RegisterClientCli;
 import br.com.alura.bytebank.cli.client.RemoveClientCli;
 import br.com.alura.bytebank.cli.client.UpdateClientCli;
 import br.com.alura.bytebank.domain.account.AccountRepository;
+import br.com.alura.bytebank.domain.account.AccountService;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.infra.account.repository.AccountRepositoryDb;
+import br.com.alura.bytebank.infra.account.service.AccountServiceDb;
 import br.com.alura.bytebank.infra.client.ClientRepositoryDb;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -22,6 +25,7 @@ public class BytebankCli {
     private static final EntityManager entityManager = factory.createEntityManager();
     private static final ClientRepository clientRepository = new ClientRepositoryDb(entityManager);
     private static final AccountRepository accountRepository = new AccountRepositoryDb(entityManager);
+    private static final AccountService accountService = new AccountServiceDb(entityManager);
 
     public static void main(String[] args) {
         int option = showMenu();
@@ -102,7 +106,7 @@ public class BytebankCli {
                     case 2 -> System.out.println(ListAccountsCli.all(accountRepository));
                     case 3 -> System.out.println(ListAccountsCli.byNumber(accountRepository));
                     case 4 -> System.out.println(ListAccountsCli.byCpf(accountRepository));
-                    case 5 -> System.out.println("Deposit");
+                    case 5 -> new DepositCli(accountRepository, accountService, entityManager);
                     case 6 -> System.out.println("Withdraw");
                     case 7 -> System.out.println("Transfer");
                 }
