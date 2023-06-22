@@ -8,6 +8,8 @@ import br.com.alura.bytebank.domain.account.AccountRepository;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import jakarta.persistence.EntityManager;
 
+import java.util.List;
+
 public class AccountUtil {
     public static void create(EntityManager entityManager, AccountRepository accountRepository) {
         ClientRepository clientRepository = RepositoryUtil.clientRepository();
@@ -26,5 +28,10 @@ public class AccountUtil {
     public static AccountDetailDto list(AccountRepository accountRepository, Integer number) {
         ListAccount list = new ListAccount(accountRepository);
         return list.searchByNumber(number);
+    }
+
+    public static List<AccountDetailDto> all(AccountRepository accountRepository) {
+        ListAccount listAccount = new ListAccount(accountRepository);
+        return listAccount.list();
     }
 }
