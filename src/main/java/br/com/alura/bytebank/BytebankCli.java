@@ -97,7 +97,7 @@ public class BytebankCli {
     private static void accountMenu() {
         var option = showAccountMenu();
 
-        while (option != 8) {
+        while (option != 9) {
             try {
                 switch (option) {
                     case 1 -> new RegisterAccountCli(accountRepository, clientRepository, entityManager);
@@ -107,6 +107,7 @@ public class BytebankCli {
                     case 5 -> new DepositCli(accountRepository, accountService, entityManager);
                     case 6 -> new WithdrawCli(accountRepository, accountService, entityManager);
                     case 7 -> new TransferCli(accountRepository, accountService, entityManager);
+                    case 8 -> new CloseAccountCli(accountRepository, entityManager);
                 }
             } catch (RuntimeException exception) {
                 System.out.println("Error: " + exception.getMessage());
@@ -123,11 +124,12 @@ public class BytebankCli {
                 1 - Open new account
                 2 - List Accounts
                 3 - Search by number
-                4 - Search by client cpf
+                4 - List by client cpf
                 5 - Deposit
                 6 - Withdraw
                 7 - Transfer
-                8 - Back to menu
+                8 - Close
+                9 - Back to menu
                 """);
 
         return scanner.nextInt();

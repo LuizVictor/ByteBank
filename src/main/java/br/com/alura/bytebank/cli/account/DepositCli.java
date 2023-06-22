@@ -21,5 +21,8 @@ public class DepositCli {
         Deposit deposit = new Deposit(repository, service);
         deposit.execute(number, amount);
         entityManager.flush();
+
+        System.out.println("Amount deposited successfully");
+        System.out.println("Press ENTER to return to the menu");
     }
 }

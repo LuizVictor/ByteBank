@@ -24,5 +24,8 @@ public class TransferCli {
         Transfer transfer = new Transfer(repository, service);
         transfer.execute(from, to, amount);
         entityManager.flush();
+
+        System.out.println("Amount transferred successfully");
+        System.out.println("Press ENTER to return to the menu");
     }
 }
