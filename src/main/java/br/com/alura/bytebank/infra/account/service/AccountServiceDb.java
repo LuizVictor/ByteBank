@@ -1,7 +1,7 @@
 package br.com.alura.bytebank.infra.account.service;
 
+import br.com.alura.bytebank.domain.account.Account;
 import br.com.alura.bytebank.domain.account.AccountService;
-import br.com.alura.bytebank.infra.orm.AccountModel;
 import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;
@@ -15,11 +15,11 @@ public class AccountServiceDb implements AccountService {
 
     @Override
     public void deposit(Integer accountNumber, BigDecimal amount) {
-        entityManager.find(AccountModel.class, accountNumber).setBalance(amount);
+        entityManager.find(Account.class, accountNumber).setBalance(amount);
     }
 
     @Override
     public void withdraw(Integer accountNumber, BigDecimal amount) {
-        entityManager.find(AccountModel.class, accountNumber).setBalance(amount);
+        entityManager.find(Account.class, accountNumber).setBalance(amount);
     }
 }

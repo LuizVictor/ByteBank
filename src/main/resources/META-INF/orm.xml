@@ -19,4 +19,16 @@
         </attributes>
     </entity>
 
+    <entity class="br.com.alura.bytebank.domain.account.Account" access="FIELD" name="Account">
+        <table name="accounts"/>
+        <attributes>
+            <id name="number"/>
+            <basic name="balance">
+                <column name="balance"/>
+            </basic>
+            <many-to-one name="client" fetch="EAGER">
+                <join-column name="client_id"/>
+            </many-to-one>
+        </attributes>
+    </entity>
 </entity-mappings>

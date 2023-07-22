@@ -6,9 +6,9 @@ import br.com.alura.bytebank.domain.client.ClientDto;
 import java.math.BigDecimal;
 
 public class Account {
-    private final Integer number;
+    private Integer number;
     private BigDecimal balance;
-    private final Client client;
+    private Client client;
 
     public Account(AccountDto data) {
         this.number = data.number();
