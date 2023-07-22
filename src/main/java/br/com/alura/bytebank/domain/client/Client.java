@@ -1,20 +1,27 @@
 package br.com.alura.bytebank.domain.client;
 
+import br.com.alura.bytebank.domain.client.exceptions.ClientDomainException;
+
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class Client {
     private String name;
-    private final Cpf cpf;
-    private Email email;
+    private String cpf;
+    private String email;
 
     public Client(ClientDto data) {
         this.name = data.name();
-        this.cpf = new Cpf(data.cpf());
-        this.email = new Email(data.email());
+        this.setCpf(data.cpf());
+        this.setEmail(data.email());
+    }
+
+    public Client() {
+
     }
 
     public String cpf() {
-        return cpf.toString();
+        return cpf;
     }
 
     public String name() {
@@ -22,7 +29,29 @@ public class Client {
     }
 
     public String email() {
-        return email.toString();
+        return email;
+    }
+
+    private void setCpf(String cpf) {
+        String regex = "\\d{3}.\\d{3}.\\d{3}-\\d{2}$";
+        boolean isValid = Pattern.compile(regex).matcher(cpf).find();
+
+        if (!isValid) {
+            throw new ClientDomainException("Invalid CPF");
+        }
+
+        this.cpf = cpf;
+    }
+
+    private void setEmail(String email) {
+        String regex = "^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,3})+$";
+        boolean isValid = Pattern.compile(regex).matcher(email).find();
+
+        if (!isValid) {
+            throw new ClientDomainException("Invalid email");
+        }
+
+        this.email = email;
     }
 
     @Override
@@ -42,8 +71,18 @@ public class Client {
     public String toString() {
         return "Client{" +
                 "name='" + name + '\'' +
-                ", cpf='" + cpf.toString() + '\'' +
-                ", email='" + email.toString() + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
                 '}';
+    }
+
+    public void update(ClientUpdateDto updateDto) {
+        if (!updateDto.name().isEmpty()) {
+            this.name = updateDto.name();
+        }
+
+        if (!updateDto.email().isEmpty()) {
+            this.email = updateDto.email();
+        }
     }
 }

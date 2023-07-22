@@ -1,17 +1,14 @@
 package br.com.alura.bytebank.infra.client;
 
 import br.com.alura.bytebank.domain.client.Client;
-import br.com.alura.bytebank.domain.client.ClientDto;
 import br.com.alura.bytebank.domain.client.ClientRepository;
 import br.com.alura.bytebank.domain.client.ClientUpdateDto;
-import br.com.alura.bytebank.infra.orm.ClientModel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ClientRepositoryDb implements ClientRepository {
     private final EntityManager entityManager;
@@ -22,27 +19,21 @@ public class ClientRepositoryDb implements ClientRepository {
 
     @Override
     public void register(Client client) {
-        ClientDto clientDto = new ClientDto(client);
-        entityManager.persist(new ClientModel(clientDto));
+        entityManager.persist(client);
     }
 
     @Override
     public List<Client> list() {
-        String jpql = "select clients from ClientModel clients";
-        TypedQuery<ClientModel> query = entityManager.createQuery(jpql, ClientModel.class);
+        String jpql = "select clients from Client clients";
+        TypedQuery<Client> query = entityManager.createQuery(jpql, Client.class);
 
-        return query.getResultList().stream().map(clientModel -> {
-            ClientDto clientDto = new ClientDto(clientModel.name(), clientModel.cpf(), clientModel.email());
-            return new Client(clientDto);
-        }).collect(Collectors.toList());
+        return query.getResultList();
     }
 
     @Override
     public Client searchByCpf(String cpf) {
         try {
-            ClientModel clientModel = entityManager.find(ClientModel.class, cpf);
-            ClientDto clientDto = new ClientDto(clientModel.name(), clientModel.cpf(), clientModel.email());
-            return new Client(clientDto);
+            return entityManager.find(Client.class, cpf);
         } catch (NullPointerException e) {
             return null;
         }
@@ -51,11 +42,9 @@ public class ClientRepositoryDb implements ClientRepository {
     @Override
     public Client searchByEmail(String email) {
         try {
-            String jpql = "select client from ClientModel client where client.email = :email";
+            String jpql = "select client from Client client where client.email = :email";
             Query query = entityManager.createQuery(jpql);
-            ClientModel clientModel = (ClientModel) query.setParameter("email", email).getSingleResult();
-            ClientDto clientDto = new ClientDto(clientModel.name(), clientModel.cpf(), clientModel.email());
-            return new Client(clientDto);
+            return (Client) query.setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -63,14 +52,14 @@ public class ClientRepositoryDb implements ClientRepository {
 
     @Override
     public void update(Client client) {
-        ClientModel clientModel = entityManager.find(ClientModel.class, client.cpf());
+        Client clientUpdate = entityManager.find(Client.class, client.cpf());
         ClientUpdateDto updateDto = new ClientUpdateDto(client.name(), client.email());
-        clientModel.update(updateDto);
+        clientUpdate.update(updateDto);
     }
 
     @Override
     public void remove(Client client) {
-        ClientModel clientModel = entityManager.find(ClientModel.class, client.cpf());
-        entityManager.remove(clientModel);
+        Client clientDelete = entityManager.find(Client.class, client.cpf());
+        entityManager.remove(clientDelete);
     }
 }
