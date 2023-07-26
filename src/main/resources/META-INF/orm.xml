@@ -6,7 +6,7 @@
                  version="2.2">
 
     <package>org.hibernate.annotations</package>
-    <entity class="br.com.alura.bytebank.domain.client.Client" access="FIELD" name="Client">
+    <entity class="br.com.luizvictor.bytebank.domain.client.Client" access="FIELD" name="Client">
         <table name="clients"/>
         <attributes>
             <id name="cpf"/>
@@ -19,7 +19,7 @@
         </attributes>
     </entity>
 
-    <entity class="br.com.alura.bytebank.domain.account.Account" access="FIELD" name="Account">
+    <entity class="br.com.luizvictor.bytebank.domain.account.Account" access="FIELD" name="Account">
         <table name="accounts"/>
         <attributes>
             <id name="number"/>
