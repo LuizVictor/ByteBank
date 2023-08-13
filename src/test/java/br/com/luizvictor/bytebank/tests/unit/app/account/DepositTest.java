@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DepositTest {
     private static ListAccount listAccount;
     private static Deposit deposit;
+    private static Integer accountNumber;
 
     @BeforeAll
     static void beforeAll() {
@@ -33,37 +34,38 @@ public class DepositTest {
 
         AccountRepository accountRepository = new AccountRepositoryMemory();
         RegisterAccount openAccount = new RegisterAccount(accountRepository, clientRepository);
-        AccountDto accountDto = new AccountDto(1234, clientDto);
-        openAccount.execute(accountDto);
+        openAccount.execute(clientDto);
 
         listAccount = new ListAccount(accountRepository);
+        accountNumber = listAccount.list().get(0).number();
+
         AccountService accountService = new AccountServiceMemory(accountRepository);
         deposit = new Deposit(accountRepository, accountService);
     }
 
     @Test
     void mustDepositTen() {
-        deposit.execute(1234, BigDecimal.TEN);
+        deposit.execute(accountNumber, BigDecimal.TEN);
 
-        assertEquals("John", listAccount.searchByNumber(1234).client().name());
-        assertEquals(1234, listAccount.searchByNumber(1234).number());
-        assertEquals(BigDecimal.TEN, listAccount.searchByNumber(1234).balance());
+        assertEquals("John", listAccount.searchByNumber(accountNumber).client().name());
+        assertEquals(accountNumber, listAccount.searchByNumber(accountNumber).number());
+        assertEquals(BigDecimal.TEN, listAccount.searchByNumber(accountNumber).balance());
     }
 
     @Test
     void mustDepositMoreTen() {
-        deposit.execute(1234, BigDecimal.TEN);
+        deposit.execute(accountNumber, BigDecimal.TEN);
 
-        assertEquals("John", listAccount.searchByNumber(1234).client().name());
-        assertEquals(1234, listAccount.searchByNumber(1234).number());
-        assertEquals(new BigDecimal(20), listAccount.searchByNumber(1234).balance());
+        assertEquals("John", listAccount.searchByNumber(accountNumber).client().name());
+        assertEquals(accountNumber, listAccount.searchByNumber(accountNumber).number());
+        assertEquals(new BigDecimal(20), listAccount.searchByNumber(accountNumber).balance());
     }
 
 
     @Test
     void mustNotDepositZero() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(1234, BigDecimal.ZERO);
+            deposit.execute(accountNumber, BigDecimal.ZERO);
         });
 
         String expectedMessage = "Cannot deposit an amount equal to zero or a negative amount";
@@ -75,7 +77,7 @@ public class DepositTest {
     @Test
     void mustNotDepositNegativeAmount() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(1234, new BigDecimal(-111));
+            deposit.execute(accountNumber, new BigDecimal(-111));
         });
 
         String expectedMessage = "Cannot deposit an amount equal to zero or a negative amount";

@@ -3,6 +3,7 @@ package br.com.luizvictor.bytebank.tests.unit.app.account;
 import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
+import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
 import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
@@ -30,10 +31,8 @@ public class ListAccountTest {
 
         AccountRepository accountRepository = new AccountRepositoryMemory();
         RegisterAccount registerAccount = new RegisterAccount(accountRepository, clientRepository);
-        AccountDto account1 = new AccountDto(1234,clientDto);
-        AccountDto account2 = new AccountDto(4321,clientDto);
-        registerAccount.execute(account1);
-        registerAccount.execute(account2);
+        registerAccount.execute(clientDto);
+        registerAccount.execute(clientDto);
 
         listAccount = new ListAccount(accountRepository);
     }
@@ -45,9 +44,11 @@ public class ListAccountTest {
 
     @Test
     void mustReturnAccountSearchedByNumber() {
-        assertEquals(4321, listAccount.searchByNumber(4321).number());
-        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(4321).balance());
-        assertEquals("John", listAccount.searchByNumber(4321).client().name());
+        AccountDetailDto account = listAccount.searchByCpf("123.123.123-12").get(0);
+
+        assertEquals(account.number(), listAccount.searchByNumber(account.number()).number());
+        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(account.number()).balance());
+        assertEquals("John", listAccount.searchByNumber(account.number()).client().name());
     }
 
     @Test

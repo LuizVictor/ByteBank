@@ -23,7 +23,6 @@ public class CloseAccount {
             throw new AccountDomainException("Cannot close account with balance");
         }
 
-        AccountDto data = new AccountDto(account.number(), account.client());
-        this.accountRepository.close(new Account(data));
+        this.accountRepository.close(account.number());
     }
 }

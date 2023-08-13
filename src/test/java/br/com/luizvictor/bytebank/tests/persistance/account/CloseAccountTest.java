@@ -1,6 +1,7 @@
 package br.com.luizvictor.bytebank.tests.persistance.account;
 
 import br.com.luizvictor.bytebank.app.account.CloseAccount;
+import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.tests.persistance.util.AccountUtil;
 import br.com.luizvictor.bytebank.tests.persistance.util.RepositoryUtil;
@@ -27,7 +28,8 @@ public class CloseAccountTest {
 
     @Test
     void mustCloseAccount1234() {
-        close.execute(1234);
+        ListAccount listAccount = new ListAccount(repository);
+        close.execute(listAccount.searchByCpf("123.123.123-12").get(0).number());
         entityManager.flush();
 
         assertEquals(1, AccountUtil.all(repository).size());

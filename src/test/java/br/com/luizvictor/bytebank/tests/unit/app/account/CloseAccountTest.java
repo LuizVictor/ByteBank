@@ -1,6 +1,7 @@
 package br.com.luizvictor.bytebank.tests.unit.app.account;
 
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
+import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
 import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
@@ -26,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CloseAccountTest {
     private static ListAccount listAccount;
     private static CloseAccount close;
+    private static Integer firstAccountNumber;
+    private static Integer secondAccountNumber;
 
     @BeforeAll
     static void beforeAll() {
@@ -36,28 +39,30 @@ public class CloseAccountTest {
 
         AccountRepository accountRepository = new AccountRepositoryMemory();
         RegisterAccount openAccount = new RegisterAccount(accountRepository, clientRepository);
-        AccountDto account1 = new AccountDto(1234, clientDto);
-        AccountDto account2 = new AccountDto(4321, clientDto);
-        openAccount.execute(account1);
-        openAccount.execute(account2);
-        AccountService accountService = new AccountServiceMemory(accountRepository);
-        Deposit deposit = new Deposit(accountRepository, accountService);
-        deposit.execute(1234, new BigDecimal(BigInteger.TEN));
+        openAccount.execute(clientDto);
+        openAccount.execute(clientDto);
 
         listAccount = new ListAccount(accountRepository);
+        firstAccountNumber = listAccount.searchByCpf("123.123.123-12").get(0).number();
+        secondAccountNumber = listAccount.searchByCpf("123.123.123-12").get(1).number();
+
+        AccountService accountService = new AccountServiceMemory(accountRepository);
+        Deposit deposit = new Deposit(accountRepository, accountService);
+        deposit.execute(secondAccountNumber, new BigDecimal(BigInteger.TEN));
+
         close = new CloseAccount(accountRepository);
     }
 
     @Test
     void mustCloseAccount() {
-        close.execute(4321);
+        close.execute(firstAccountNumber);
         assertEquals(1, listAccount.list().size());
     }
 
     @Test
     void mustNotCloseAccountWithBalance() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            close.execute(1234);
+            close.execute(secondAccountNumber);
         });
 
         String expectedMessage = "Cannot close account with balance";

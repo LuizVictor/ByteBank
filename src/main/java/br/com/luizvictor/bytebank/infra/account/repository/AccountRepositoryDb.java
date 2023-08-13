@@ -44,8 +44,8 @@ public class AccountRepositoryDb implements AccountRepository {
     }
 
     @Override
-    public void close(Account account) {
-        Account accountClose = entityManager.find(Account.class, account.number());
+    public void close(Integer accountNumber) {
+        Account accountClose = entityManager.find(Account.class, accountNumber);
         entityManager.remove(accountClose);
     }
 }

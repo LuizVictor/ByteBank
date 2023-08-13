@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class WithdrawTest {
     private static ListAccount listAccount;
     private static Withdraw withdraw;
+    private static Integer accountNumber;
 
 
     @BeforeAll
@@ -36,28 +37,30 @@ public class WithdrawTest {
 
         AccountRepository accountRepository = new AccountRepositoryMemory();
         RegisterAccount openAccount = new RegisterAccount(accountRepository, clientRepository);
-        AccountDto accountDto = new AccountDto(1234, clientDto);
-        openAccount.execute(accountDto);
+        openAccount.execute(clientDto);
 
         AccountService accountService = new AccountServiceMemory(accountRepository);
+
+        listAccount = new ListAccount(accountRepository);
+        accountNumber = listAccount.list().get(0).number();
+
         Deposit deposit = new Deposit(accountRepository, accountService);
-        deposit.execute(1234, new BigDecimal("100"));
+        deposit.execute(accountNumber, new BigDecimal("100"));
 
         withdraw = new Withdraw(accountRepository, accountService);
-        listAccount = new ListAccount(accountRepository);
     }
 
     @Test
     void mustWithdrawTen() {
-        withdraw.execute(1234, BigDecimal.TEN);
-        assertEquals("John", listAccount.searchByNumber(1234).client().name());
-        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(1234).balance());
+        withdraw.execute(accountNumber, BigDecimal.TEN);
+        assertEquals("John", listAccount.searchByNumber(accountNumber).client().name());
+        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(accountNumber).balance());
     }
 
     @Test
     void mustNotWithAmountGreaterThaBalance() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            withdraw.execute(1234, new BigDecimal("200"));
+            withdraw.execute(accountNumber, new BigDecimal("200"));
         });
 
         String expectedMessage = "Amount greater than balance";
@@ -69,7 +72,7 @@ public class WithdrawTest {
     @Test
     void mustNotWithdrawNegativeAmount() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            withdraw.execute(1234, new BigDecimal("-200"));
+            withdraw.execute(accountNumber, new BigDecimal("-200"));
         });
 
         String expectedMessage = "Cannot withdraw an amount equal to zero or a negative amount";

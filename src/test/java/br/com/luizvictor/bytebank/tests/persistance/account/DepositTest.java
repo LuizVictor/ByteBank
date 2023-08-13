@@ -1,6 +1,7 @@
 package br.com.luizvictor.bytebank.tests.persistance.account;
 
 import br.com.luizvictor.bytebank.app.account.Deposit;
+import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
@@ -20,6 +21,8 @@ public class DepositTest {
     private static EntityManager entityManager;
     private static Deposit deposit;
     private static AccountRepository repository;
+    private static Integer accountWithBalance;
+    private static ListAccount listAccount;
 
     @BeforeAll
     static void beforeAll() {
@@ -30,22 +33,23 @@ public class DepositTest {
 
         AccountService accountService = new AccountServiceDb(entityManager);
         deposit = new Deposit(repository, accountService);
+
+        listAccount = new ListAccount(repository);
+        accountWithBalance = listAccount.searchByCpf("123.123.123-12").get(0).number();
     }
 
     @Test
     void mustDepositTen() {
-        deposit.execute(1234, BigDecimal.TEN);
+        deposit.execute(accountWithBalance, BigDecimal.TEN);
         entityManager.flush();
 
-        assertEquals("123.123.123-12", AccountUtil.list(repository, 1234).client().cpf());
-        assertEquals("John", AccountUtil.list(repository, 1234).client().name());
-        assertEquals(BigDecimal.TEN, AccountUtil.list(repository, 1234).balance());
+        assertEquals(BigDecimal.TEN, AccountUtil.list(repository, accountWithBalance).balance());
     }
 
     @Test
     void mustNotDepositZero() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(4321, BigDecimal.ZERO);
+            deposit.execute(accountWithBalance, BigDecimal.ZERO);
             entityManager.flush();
         });
 
@@ -57,8 +61,10 @@ public class DepositTest {
 
     @Test
     void mustNotDepositNegativeAmount() {
+        Integer accountWithoutBalance = listAccount.searchByCpf("123.123.123-21").get(0).number();
+
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(4321, new BigDecimal(-111));
+            deposit.execute(accountWithoutBalance, new BigDecimal(-111));
             entityManager.flush();
         });
 
@@ -66,7 +72,7 @@ public class DepositTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
-        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, 4321).balance());
+        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, accountWithoutBalance).balance());
     }
 
     @AfterAll

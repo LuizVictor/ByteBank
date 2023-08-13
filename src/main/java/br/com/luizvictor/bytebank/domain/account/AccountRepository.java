@@ -11,5 +11,5 @@ public interface AccountRepository {
 
     List<Account> searchByClientCpf(String cpf);
 
-    void close(Account account);
+    void close(Integer accountNumber);
 }

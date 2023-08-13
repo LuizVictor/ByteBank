@@ -35,39 +35,23 @@ public class RegisterAccountTest {
 
     @Test
     void mustRegisterAnAccount() {
-        AccountDto accountDto = new AccountDto(1234, clientDto);
-        register.execute(accountDto);
+        register.execute(clientDto);
 
         ListAccount account = new ListAccount(accountRepository);
 
-        assertEquals(1234, account.searchByNumber(1234).number());
-        assertEquals("John",account.searchByNumber(1234).client().name());
+        assertEquals(1, account.searchByCpf("123.123.123-12").size());
+        assertEquals(4, account.searchByCpf("123.123.123-12").get(0).number().toString().length());
+        assertEquals("John", account.searchByCpf("123.123.123-12").get(0).client().name());
     }
 
     @Test
     void mustNotRegisterAccountWithNonExistentClient() {
         Exception exception = assertThrows(ClientNotFoundException.class, () -> {
             ClientDto nonExistent = new ClientDto("nonexistent", "000.000.000-00", "nonexistent");
-            AccountDto accountDto = new AccountDto(1234, nonExistent);
-            register.execute(accountDto);
+            register.execute(nonExistent);
         });
 
         String expectedMessage = "There is no registered client with this CPF";
-        String actualMessage = exception.getMessage();
-
-        assertEquals(expectedMessage, actualMessage);
-    }
-
-    @Test
-    void mustNotRegisterAccountWithSameNumber() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            AccountDto accountDto = new AccountDto(4321, clientDto);
-            AccountDto accountDto1 = new AccountDto(4321, clientDto);
-            register.execute(accountDto);
-            register.execute(accountDto1);
-        });
-
-        String expectedMessage = "There is already an account registered with this number";
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);

@@ -15,10 +15,9 @@ class CreateAccountTest {
     @Test
     void mustCreateAValidAccount() {
         ClientDto client = new ClientDto("John", "123.123.123-12", "john@email.com");
-        AccountDto accountDto = new AccountDto(1234, client);
-        Account account = new Account(accountDto);
+        Account account = new Account(client);
 
-        assertEquals(1234, account.number());
+        assertEquals(4, account.number().toString().length());
         assertEquals("John", account.client().name());
         assertEquals("john@email.com", account.client().email());
         assertEquals(BigDecimal.ZERO, account.balance());
@@ -28,8 +27,7 @@ class CreateAccountTest {
     void mustNotCreateAnAccountWithInvalidClientCpf() {
         Exception exception = assertThrows(ClientDomainException.class, () -> {
             ClientDto client = new ClientDto("John", "123.123.123", "john@email.com");
-            AccountDto accountDto = new AccountDto(1234, client);
-            new Account(accountDto);
+            new Account(client);
         });
 
         String expectedMessage = "Invalid CPF";
@@ -42,8 +40,7 @@ class CreateAccountTest {
     void mustNotCreateAnAccountWithInvalidClientEmail() {
         Exception exception = assertThrows(ClientDomainException.class, () -> {
             ClientDto client = new ClientDto("John", "123.123.123-12", "john@email");
-            AccountDto accountDto = new AccountDto(1234, client);
-            new Account(accountDto);
+            new Account(client);
         });
 
         String expectedMessage = "Invalid email";

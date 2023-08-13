@@ -5,6 +5,7 @@ import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
 import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
+import br.com.luizvictor.bytebank.domain.client.ClientDto;
 import br.com.luizvictor.bytebank.domain.client.ClientRepository;
 import jakarta.persistence.EntityManager;
 
@@ -14,13 +15,12 @@ public class AccountUtil {
     public static void create(EntityManager entityManager, AccountRepository accountRepository) {
         ClientRepository clientRepository = RepositoryUtil.clientRepository();
         ClientUtil.create(entityManager, clientRepository);
-
-        AccountDto dto1 = new AccountDto(1234, ClientUtil.list(clientRepository, "123.123.123-12"));
-        AccountDto dto2 = new AccountDto(4321, ClientUtil.list(clientRepository, "123.123.123-21"));
+        ClientDto client1 = ClientUtil.list(clientRepository, "123.123.123-12");
+        ClientDto client2 = ClientUtil.list(clientRepository, "123.123.123-21");
 
         RegisterAccount registerAccount = new RegisterAccount(accountRepository, clientRepository);
-        registerAccount.execute(dto1);
-        registerAccount.execute(dto2);
+        registerAccount.execute(client1);
+        registerAccount.execute(client2);
 
         entityManager.flush();
     }

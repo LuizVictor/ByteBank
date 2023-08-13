@@ -1,6 +1,7 @@
 package br.com.luizvictor.bytebank.tests.persistance.account;
 
 import br.com.luizvictor.bytebank.app.account.Deposit;
+import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.Transfer;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
@@ -21,6 +22,8 @@ public class TransferTest {
     private static EntityManager entityManager;
     private static AccountRepository repository;
     private static Transfer transfer;
+    private static Integer accountWithBalance;
+    private static Integer accountWithoutBalance;
 
     @BeforeAll
     static void beforeAll() {
@@ -29,9 +32,13 @@ public class TransferTest {
         repository = RepositoryUtil.accountRepository();
         AccountUtil.create(entityManager, repository);
 
+        ListAccount listAccount = new ListAccount(repository);
+        accountWithBalance = listAccount.searchByCpf("123.123.123-12").get(0).number();
+        accountWithoutBalance = listAccount.searchByCpf("123.123.123-21").get(0).number();
+
         AccountService accountService = new AccountServiceDb(entityManager);
         Deposit deposit = new Deposit(repository, accountService);
-        deposit.execute(1234, new BigDecimal("100"));
+        deposit.execute(accountWithBalance, new BigDecimal("100"));
         entityManager.flush();
 
         transfer = new Transfer(repository, accountService);
@@ -39,21 +46,21 @@ public class TransferTest {
 
     @Test
     void mustTransferTen() {
-        transfer.execute(1234, 4321, BigDecimal.TEN);
+        transfer.execute(accountWithBalance, accountWithoutBalance, BigDecimal.TEN);
         entityManager.flush();
 
-        assertEquals("123.123.123-12", AccountUtil.list(repository, 1234).client().cpf());
-        assertEquals("John", AccountUtil.list(repository, 1234).client().name());
-        assertEquals(new BigDecimal("90"), AccountUtil.list(repository, 1234).balance());
-        assertEquals("123.123.123-21", AccountUtil.list(repository, 4321).client().cpf());
-        assertEquals("Joanna", AccountUtil.list(repository, 4321).client().name());
-        assertEquals(BigDecimal.TEN, AccountUtil.list(repository, 4321).balance());
+        assertEquals("123.123.123-12", AccountUtil.list(repository, accountWithBalance).client().cpf());
+        assertEquals("John", AccountUtil.list(repository, accountWithBalance).client().name());
+        assertEquals(new BigDecimal("90"), AccountUtil.list(repository, accountWithBalance).balance());
+        assertEquals("123.123.123-21", AccountUtil.list(repository, accountWithoutBalance).client().cpf());
+        assertEquals("Joanna", AccountUtil.list(repository, accountWithoutBalance).client().name());
+        assertEquals(BigDecimal.TEN, AccountUtil.list(repository, accountWithoutBalance).balance());
     }
 
     @Test
     void mustNotTransferToSameAccount() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            transfer.execute(1234,1234, BigDecimal.TEN);
+            transfer.execute(accountWithBalance,accountWithBalance, BigDecimal.TEN);
             entityManager.flush();
         });
 
@@ -61,7 +68,7 @@ public class TransferTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
-        assertEquals(new BigDecimal("100"), AccountUtil.list(repository, 1234).balance());
+        assertEquals(new BigDecimal("100"), AccountUtil.list(repository, accountWithBalance).balance());
     }
 
     @AfterAll

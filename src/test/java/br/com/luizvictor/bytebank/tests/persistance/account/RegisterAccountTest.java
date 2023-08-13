@@ -35,38 +35,21 @@ public class RegisterAccountTest {
 
     @Test
     void mustRegisterAccount() {
-        AccountDto accountDto = new AccountDto(1234, clientDto);
-
-        registerAccount.execute(accountDto);
+        registerAccount.execute(clientDto);
         entityManager.flush();
 
-        assertEquals("123.123.123-12", accountRepository.searchByNumber(1234).client().cpf());
-        assertEquals("John", accountRepository.searchByNumber(1234).client().name());
-        assertEquals(BigDecimal.ZERO, accountRepository.searchByNumber(1234).balance());
-    }
+        Integer accountNumber = accountRepository.list().get(0).number();
 
-    @Test
-    void mustNotRegisterAccountWithSameNumber() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            AccountDto accountDto1 = new AccountDto(4321, clientDto);
-            AccountDto accountDto2 = new AccountDto(4321, clientDto);
-            registerAccount.execute(accountDto1);
-            registerAccount.execute(accountDto2);
-            entityManager.flush();
-        });
-
-        String expected = "There is already an account registered with this number";
-        String actual = exception.getMessage();
-
-        assertEquals(expected, actual);
+        assertEquals("123.123.123-12", accountRepository.searchByNumber(accountNumber).client().cpf());
+        assertEquals("John", accountRepository.searchByNumber(accountNumber).client().name());
+        assertEquals(BigDecimal.ZERO, accountRepository.searchByNumber(accountNumber).balance());
     }
 
     @Test
     void mustNotRegisterAccountWithAClientNotRegistered() {
         Exception exception = assertThrows(ClientNotFoundException.class, () -> {
             ClientDto unregistered = new ClientDto("Unregistered", "123.123.123-22", "email@email.com");
-            AccountDto accountDto = new AccountDto(1234, unregistered);
-            registerAccount.execute(accountDto);
+            registerAccount.execute(unregistered);
             entityManager.flush();
         });
 

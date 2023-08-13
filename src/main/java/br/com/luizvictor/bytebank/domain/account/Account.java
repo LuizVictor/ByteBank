@@ -4,16 +4,26 @@ import br.com.luizvictor.bytebank.domain.client.Client;
 import br.com.luizvictor.bytebank.domain.client.ClientDto;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 public class Account {
     private Integer number;
     private BigDecimal balance;
     private Client client;
 
-    public Account(AccountDto data) {
-        this.number = data.number();
-        this.client = new Client(data.client());
+    public Account(ClientDto client) {
+        this.number = generateNumber();
+        this.client = new Client(client);
         this.balance = BigDecimal.ZERO;
+    }
+
+    public Account() {
+
+    }
+
+    private Integer generateNumber() {
+        Random random = new Random();
+        return random.nextInt(9000) + 1000;
     }
 
     public Integer number() {

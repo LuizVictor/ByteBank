@@ -1,6 +1,7 @@
 package br.com.luizvictor.bytebank.tests.persistance.account;
 
 import br.com.luizvictor.bytebank.app.account.ListAccount;
+import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountNotFoundException;
 import br.com.luizvictor.bytebank.tests.persistance.util.AccountUtil;
 import br.com.luizvictor.bytebank.tests.persistance.util.RepositoryUtil;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,25 +28,29 @@ public class ListAccountTest {
 
     @Test
     void mustListAllAccounts() {
+        AccountDetailDto johnAccountNumber = listAccount.searchByCpf("123.123.123-12").get(0);
+        AccountDetailDto joannaAccountNumber = listAccount.searchByCpf("123.123.123-21").get(0);
         assertEquals(2, listAccount.list().size());
-        assertEquals("John", listAccount.list().get(0).client().name());
-        assertEquals("Joanna", listAccount.list().get(1).client().name());
+        assertTrue(listAccount.list().contains(johnAccountNumber));
+        assertTrue(listAccount.list().contains(joannaAccountNumber));
     }
 
     @Test
     void mustReturnAccountByNumber() {
-        assertEquals("John", listAccount.searchByNumber(1234).client().name());
-        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(1234).balance());
-        assertEquals("Joanna", listAccount.searchByNumber(4321).client().name());
-        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(4321).balance());
+        AccountDetailDto johnAccountNumber = listAccount.searchByCpf("123.123.123-12").get(0);
+        AccountDetailDto joannaAccountNumber = listAccount.searchByCpf("123.123.123-21").get(0);
+        assertEquals("John", listAccount.searchByNumber(johnAccountNumber.number()).client().name());
+        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(johnAccountNumber.number()).balance());
+        assertEquals("Joanna", listAccount.searchByNumber(joannaAccountNumber.number()).client().name());
+        assertEquals(BigDecimal.ZERO, listAccount.searchByNumber(joannaAccountNumber.number()).balance());
     }
 
     @Test
     void mustListAccountsByClientCpf() {
         assertEquals(1, listAccount.searchByCpf("123.123.123-12").size());
         assertEquals(1, listAccount.searchByCpf("123.123.123-21").size());
-        assertEquals(1234, listAccount.searchByCpf("123.123.123-12").get(0).number());
-        assertEquals(4321, listAccount.searchByCpf("123.123.123-21").get(0).number());
+        assertEquals("John", listAccount.searchByCpf("123.123.123-12").get(0).client().name());
+        assertEquals("Joanna", listAccount.searchByCpf("123.123.123-21").get(0).client().name());
     }
 
     @Test

@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TransferTest {
     private static ListAccount listAccount;
     private static Transfer transfer;
+    private static Integer accountWithCash;
+    private static Integer accountWithoutCash;
 
     @BeforeAll
     static void beforeAll() {
@@ -39,30 +41,28 @@ public class TransferTest {
         ClientDto clientDto = new ClientDto("John", "123.123.123-12", "john@email.com");
         registerClient.execute(clientDto);
 
-        AccountDto account1 = new AccountDto(1234, clientDto);
-        registerAccount.execute(account1);
-
-        AccountDto account2 = new AccountDto(4321, clientDto);
-        registerAccount.execute(account2);
-
-        Deposit deposit = new Deposit(accountRepository, accountService);
-        deposit.execute(1234, new BigDecimal("100"));
-
+        registerAccount.execute(clientDto);
+        registerAccount.execute(clientDto);
         listAccount = new ListAccount(accountRepository);
+        accountWithCash = listAccount.list().get(0).number();
+        accountWithoutCash = listAccount.list().get(1).number();
+        Deposit deposit = new Deposit(accountRepository, accountService);
+        deposit.execute(accountWithCash, new BigDecimal("100"));
+
         transfer = new Transfer(accountRepository, accountService);
     }
 
     @Test
     void mustTransferTen() {
-        transfer.execute(1234, 4321, BigDecimal.TEN);
-        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(1234).balance());
-        assertEquals(BigDecimal.TEN, listAccount.searchByNumber(4321).balance());
+        transfer.execute(accountWithCash, accountWithoutCash, BigDecimal.TEN);
+        assertEquals(new BigDecimal("90"), listAccount.searchByNumber(accountWithCash).balance());
+        assertEquals(BigDecimal.TEN, listAccount.searchByNumber(accountWithoutCash).balance());
     }
 
     @Test
     void mustNotTransferToSameAccount() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            transfer.execute(1234,1234, BigDecimal.TEN);
+            transfer.execute(accountWithoutCash,accountWithoutCash, BigDecimal.TEN);
         });
 
         String expectedMessage = "Cannot transfer to the same account";

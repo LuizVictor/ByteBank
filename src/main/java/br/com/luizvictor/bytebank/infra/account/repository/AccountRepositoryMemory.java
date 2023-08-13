@@ -39,8 +39,8 @@ public class AccountRepositoryMemory implements AccountRepository {
 
 
     @Override
-    public void close(Account accountNumber) {
-        var account = searchByNumber(accountNumber.number());
+    public void close(Integer accountNumber) {
+        var account = searchByNumber(accountNumber);
         accounts.remove(account);
     }
 }

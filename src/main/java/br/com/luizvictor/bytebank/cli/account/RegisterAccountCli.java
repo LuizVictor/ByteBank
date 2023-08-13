@@ -25,7 +25,7 @@ public class RegisterAccountCli {
 
         RegisterAccount register = new RegisterAccount(accountRepository, clientRepository);
         AccountDto dto = new AccountDto(number, client);
-        register.execute(dto);
+        register.execute(client);
         entityManager.flush();
 
         System.out.println("Account opened successfully");

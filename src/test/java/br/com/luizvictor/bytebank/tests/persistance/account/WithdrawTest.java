@@ -1,6 +1,7 @@
 package br.com.luizvictor.bytebank.tests.persistance.account;
 
 import br.com.luizvictor.bytebank.app.account.Deposit;
+import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.Withdraw;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
@@ -21,6 +22,8 @@ public class WithdrawTest {
     private static EntityManager entityManager;
     private static Withdraw withdraw;
     private static AccountRepository repository;
+    private static Integer accountWithBalance;
+    private static Integer accountWithoutBalance;
 
     @BeforeAll
     static void beforeAll() {
@@ -31,8 +34,14 @@ public class WithdrawTest {
 
         AccountService accountService = new AccountServiceDb(entityManager);
 
+
+
+        ListAccount listAccount = new ListAccount(repository);
+        accountWithBalance = listAccount.searchByCpf("123.123.123-12").get(0).number();
+        accountWithoutBalance = listAccount.searchByCpf("123.123.123-21").get(0).number();
+
         Deposit deposit = new Deposit(repository, accountService);
-        deposit.execute(1234, BigDecimal.TEN);
+        deposit.execute(accountWithBalance, BigDecimal.TEN);
         entityManager.flush();
 
         withdraw = new Withdraw(repository, accountService);
@@ -40,19 +49,18 @@ public class WithdrawTest {
 
     @Test
     void mustWithdrawTen() {
-        withdraw.execute(1234, BigDecimal.TEN);
+        withdraw.execute(accountWithBalance, BigDecimal.TEN);
         entityManager.flush();
 
-        assertEquals("123.123.123-12", AccountUtil.list(repository, 1234).client().cpf());
-        assertEquals("John", AccountUtil.list(repository, 1234).client().name());
-        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, 1234).balance());
-
+        assertEquals("123.123.123-12", AccountUtil.list(repository, accountWithBalance).client().cpf());
+        assertEquals("John", AccountUtil.list(repository, accountWithBalance).client().name());
+        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, accountWithBalance).balance());
     }
 
     @Test
     void mustNotWithAmountGreaterThaBalance() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            withdraw.execute(4321, new BigDecimal("200"));
+            withdraw.execute(accountWithoutBalance, new BigDecimal("200"));
             entityManager.flush();
         });
 
@@ -60,13 +68,13 @@ public class WithdrawTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
-        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, 4321).balance());
+        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, accountWithoutBalance).balance());
     }
 
     @Test
     void mustNotWithdrawNegativeAmount() {
         Exception exception = assertThrows(AccountDomainException.class, () -> {
-            withdraw.execute(4321, new BigDecimal("-200"));
+            withdraw.execute(accountWithoutBalance, new BigDecimal("-200"));
             entityManager.flush();
         });
 
@@ -74,7 +82,7 @@ public class WithdrawTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
-        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, 4321).balance());
+        assertEquals(BigDecimal.ZERO, AccountUtil.list(repository, accountWithoutBalance).balance());
     }
 
     @AfterAll
