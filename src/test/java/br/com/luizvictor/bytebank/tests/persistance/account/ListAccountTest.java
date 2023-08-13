@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,9 +54,10 @@ public class ListAccountTest {
 
     @Test
     void mustNotReturnUnregisteredAccounts() {
-        Exception exception = assertThrows(AccountNotFoundException.class, () -> {
-            listAccount.searchByNumber(1111);
-        });
+        Exception exception = assertThrows(
+                AccountNotFoundException.class,
+                () -> listAccount.searchByNumber(1111)
+        );
 
         String expected = "Account not exist";
         String actual = exception.getMessage();
@@ -67,9 +67,10 @@ public class ListAccountTest {
 
     @Test
     void mustNotReturnAccountsWithNonExistentClient() {
-        Exception exception = assertThrows(AccountNotFoundException.class, () -> {
-            listAccount.searchByCpf("123.123.123-88");
-        });
+        Exception exception = assertThrows(
+                AccountNotFoundException.class,
+                () -> listAccount.searchByCpf("123.123.123-88")
+        );
 
         String expectedMessage = "There is no account linked to this client";
         String actualMessage = exception.getMessage();

@@ -4,8 +4,6 @@ package br.com.luizvictor.bytebank.tests.unit.app.account;
 import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
-import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.client.ClientDto;
 import br.com.luizvictor.bytebank.domain.client.ClientRepository;

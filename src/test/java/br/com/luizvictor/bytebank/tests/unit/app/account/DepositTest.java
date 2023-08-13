@@ -4,7 +4,6 @@ import br.com.luizvictor.bytebank.app.account.Deposit;
 import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
@@ -64,9 +63,10 @@ public class DepositTest {
 
     @Test
     void mustNotDepositZero() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(accountNumber, BigDecimal.ZERO);
-        });
+        Exception exception = assertThrows(
+                AccountDomainException.class,
+                () -> deposit.execute(accountNumber, BigDecimal.ZERO)
+        );
 
         String expectedMessage = "Cannot deposit an amount equal to zero or a negative amount";
         String actualMessage = exception.getMessage();
@@ -76,9 +76,10 @@ public class DepositTest {
 
     @Test
     void mustNotDepositNegativeAmount() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            deposit.execute(accountNumber, new BigDecimal(-111));
-        });
+        Exception exception = assertThrows(
+                AccountDomainException.class,
+                () -> deposit.execute(accountNumber, new BigDecimal(-111))
+        );
 
         String expectedMessage = "Cannot deposit an amount equal to zero or a negative amount";
         String actualMessage = exception.getMessage();

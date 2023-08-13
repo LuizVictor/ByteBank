@@ -1,8 +1,6 @@
 package br.com.luizvictor.bytebank.app.account;
 
-import br.com.luizvictor.bytebank.domain.account.Account;
 import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 

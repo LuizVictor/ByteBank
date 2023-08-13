@@ -2,7 +2,6 @@ package br.com.luizvictor.bytebank.cli.account;
 
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.app.client.ListClient;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.client.ClientDto;
 import br.com.luizvictor.bytebank.domain.client.ClientRepository;
@@ -18,13 +17,11 @@ public class RegisterAccountCli {
         String cpf = scanner.next();
 
         System.out.println("Enter account number:");
-        Integer number = scanner.nextInt();
 
         ListClient listClient = new ListClient(clientRepository);
         ClientDto client = listClient.searchByCpf(cpf);
 
         RegisterAccount register = new RegisterAccount(accountRepository, clientRepository);
-        AccountDto dto = new AccountDto(number, client);
         register.execute(client);
         entityManager.flush();
 

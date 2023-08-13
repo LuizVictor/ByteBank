@@ -3,7 +3,6 @@ package br.com.luizvictor.bytebank.tests.persistance.util;
 import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.client.ClientDto;
 import br.com.luizvictor.bytebank.domain.client.ClientRepository;

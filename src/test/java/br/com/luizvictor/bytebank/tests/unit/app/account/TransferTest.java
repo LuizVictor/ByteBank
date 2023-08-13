@@ -5,7 +5,6 @@ import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.app.account.Transfer;
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
@@ -61,9 +60,10 @@ public class TransferTest {
 
     @Test
     void mustNotTransferToSameAccount() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            transfer.execute(accountWithoutCash,accountWithoutCash, BigDecimal.TEN);
-        });
+        Exception exception = assertThrows(
+                AccountDomainException.class,
+                () -> transfer.execute(accountWithoutCash,accountWithoutCash, BigDecimal.TEN)
+        );
 
         String expectedMessage = "Cannot transfer to the same account";
         String actualMessage = exception.getMessage();

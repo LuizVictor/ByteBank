@@ -1,8 +1,6 @@
 package br.com.luizvictor.bytebank.tests.unit.app.account;
 
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
-import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
@@ -61,9 +59,7 @@ public class CloseAccountTest {
 
     @Test
     void mustNotCloseAccountWithBalance() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            close.execute(secondAccountNumber);
-        });
+        Exception exception = assertThrows(AccountDomainException.class, () -> close.execute(secondAccountNumber));
 
         String expectedMessage = "Cannot close account with balance";
         String actualMessage = exception.getMessage();

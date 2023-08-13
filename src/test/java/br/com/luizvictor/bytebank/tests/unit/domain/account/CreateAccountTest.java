@@ -1,7 +1,6 @@
 
 package br.com.luizvictor.bytebank.tests.unit.domain.account;
 
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.client.ClientDto;
 import br.com.luizvictor.bytebank.domain.account.Account;
 import br.com.luizvictor.bytebank.domain.client.exceptions.ClientDomainException;

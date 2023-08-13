@@ -4,7 +4,6 @@ import br.com.luizvictor.bytebank.app.account.ListAccount;
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
 import br.com.luizvictor.bytebank.domain.account.AccountDetailDto;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountNotFoundException;
@@ -72,9 +71,10 @@ public class ListAccountTest {
 
     @Test
     void mustNotReturnUnregisteredAccounts() {
-        Exception exception = assertThrows(AccountNotFoundException.class, () -> {
-            listAccount.searchByNumber(1111);
-        });
+        Exception exception = assertThrows(
+                AccountNotFoundException.class,
+                () -> listAccount.searchByNumber(1111)
+        );
 
         String expectedMessage = "Account not exist";
         String actualMessage = exception.getMessage();
@@ -84,9 +84,10 @@ public class ListAccountTest {
 
     @Test
     void mustNotReturnAccountsWithNonExistentClient() {
-        Exception exception = assertThrows(AccountNotFoundException.class, () -> {
-            listAccount.searchByCpf("123.123.123-88");
-        });
+        Exception exception = assertThrows(
+                AccountNotFoundException.class,
+                () -> listAccount.searchByCpf("123.123.123-88")
+        );
 
         String expectedMessage = "There is no account linked to this client";
         String actualMessage = exception.getMessage();

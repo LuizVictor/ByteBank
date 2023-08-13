@@ -1,9 +1,7 @@
 package br.com.luizvictor.bytebank.tests.persistance.account;
 
 import br.com.luizvictor.bytebank.app.account.RegisterAccount;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
-import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.luizvictor.bytebank.domain.client.ClientDto;
 import br.com.luizvictor.bytebank.domain.client.exceptions.ClientNotFoundException;
 import br.com.luizvictor.bytebank.tests.persistance.util.ClientUtil;

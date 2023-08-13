@@ -1,7 +1,6 @@
 package br.com.luizvictor.bytebank.tests.unit.app.account;
 
 import br.com.luizvictor.bytebank.app.client.RegisterClient;
-import br.com.luizvictor.bytebank.domain.account.AccountDto;
 import br.com.luizvictor.bytebank.domain.account.AccountService;
 import br.com.luizvictor.bytebank.domain.account.exceptions.AccountDomainException;
 import br.com.luizvictor.bytebank.domain.account.AccountRepository;
@@ -59,9 +58,10 @@ public class WithdrawTest {
 
     @Test
     void mustNotWithAmountGreaterThaBalance() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            withdraw.execute(accountNumber, new BigDecimal("200"));
-        });
+        Exception exception = assertThrows(
+                AccountDomainException.class,
+                () -> withdraw.execute(accountNumber, new BigDecimal("200"))
+        );
 
         String expectedMessage = "Amount greater than balance";
         String actualMessage = exception.getMessage();
@@ -71,9 +71,10 @@ public class WithdrawTest {
 
     @Test
     void mustNotWithdrawNegativeAmount() {
-        Exception exception = assertThrows(AccountDomainException.class, () -> {
-            withdraw.execute(accountNumber, new BigDecimal("-200"));
-        });
+        Exception exception = assertThrows(
+                AccountDomainException.class,
+                () -> withdraw.execute(accountNumber, new BigDecimal("-200"))
+        );
 
         String expectedMessage = "Cannot withdraw an amount equal to zero or a negative amount";
         String actualMessage = exception.getMessage();
